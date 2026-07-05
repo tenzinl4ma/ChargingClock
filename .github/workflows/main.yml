@@ -18,14 +18,26 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build debug APK
-      run: ./gradlew assembleDebug
+    - name: Build APK (Bulletproof Auto-Detect)
+      run: |
+        # 1. Find the actual Android project folder automatically
+        PROJECT_DIR=$(dirname $(find . -maxdepth 2 -name "settings.gradle*" | head -n 1))
+        echo "Found Android project at: $PROJECT_DIR"
+        cd "$PROJECT_DIR"
+        
+        # 2. If the zip file deleted the gradlew file, regenerate it
+        if [ ! -f "gradlew" ]; then
+          echo "gradlew is missing. Generating a fresh one..."
+          gradle wrapper
+        fi
+        
+        # 3. Grant permissions and build
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: StandBy-App-APK
-        path: app/build/outputs/apk/debug/app-debug.apk
+        # The ** ensures it finds the APK no matter how deep the folders go
+        path: "**/app/build/outputs/apk/debug/app-debug.apk"
