@@ -1,0 +1,6 @@
+{
+  "name": "StandBy Charging Clock",
+  "description": "A full-screen, landscape charging clock that acts as a system screen saver.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
